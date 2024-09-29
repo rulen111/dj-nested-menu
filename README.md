@@ -24,7 +24,7 @@ py manage.py createsuperuser
 ```
 py manage.py runserver
 ```
-**Важно:** для корректного отображения меню его название (параметр `slug`) должно совпадать с аргументом, передаваемым функции в файле `nested_menu/templates/menu/index.html` шаблона главной страницы
+**Важно:** для корректного отображения меню его название (параметр `name`) должно совпадать с аргументом, передаваемым функции в файле `nested_menu/templates/menu/index.html` шаблона главной страницы
 ```
-{% draw_menu <your menu slug name> %}
+{% draw_menu <your menu name> %}
 ```

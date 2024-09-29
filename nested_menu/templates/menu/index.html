@@ -1,27 +1,23 @@
 {% extends 'base.html' %}
 
 {% load menu_tags %}
+{% load static %}
+
+{% block head %}
+<!--Include stylesheet for correct <li> indentation-->
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
 
 {% block content %}
-<!--Render menu objects here using menu slug name-->
+<!--Render menu objects here using menu name-->
 {% draw_menu "main_menu" %}
-<script>
-    const url = document.URL;
-    const selected = document.querySelectorAll(`a[href="${url}"]`);
+{% draw_menu "other_menu" %}
+{% endblock %}
 
-    for (let item of selected) {
-        if (item.href == url) {
-            item.style.background = "red";
-
-            while (item.parentNode.tagName != "BODY") {
-                const parent = item.parentNode;
-                if (parent.tagName == "DETAILS") {
-                    parent.setAttribute("open", "");
-                };
-
-                item = parent;
-            };
-        };
-    };
-</script>
+{% block script %}
+<!--
+JS for opening nodes and highlighting the selected one.
+Finds selected element, highlights it using "style.background" and "opens" everything above.
+-->
+<script src="{% static 'js/index.js' %}"></script>
 {% endblock %}

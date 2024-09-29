@@ -3,9 +3,12 @@ from django.conf import settings
 
 
 class Menu(models.Model):
-    name = models.CharField(max_length=50, verbose_name="Menu name")
-    # slug = models.SlugField(max_length=50, blank=True, null=True, verbose_name="Menu slug name")
-    url = models.URLField(default=settings.DEFAULT_MENU_URL)
+    """
+    Model for Menu table, containing menu name and url
+    Used for one-to-many relationship with MenuItem table
+    """
+    name = models.CharField(max_length=50, unique=True, verbose_name="Menu name")
+    url = models.URLField(default=settings.DEFAULT_MENU_URL, verbose_name="Menu url")
 
     class Meta:
         verbose_name = "Menu"
@@ -15,29 +18,19 @@ class Menu(models.Model):
         return self.name
 
 
-# class MenuItem(models.Model):
-#     parent = models.ForeignKey("self", blank=True, null=True, related_name="children", on_delete=models.CASCADE)
-#     menu = models.ForeignKey(Menu, related_name="items", on_delete=models.CASCADE)
-#
-#     position = models.PositiveIntegerField(default=1, verbose_name="Item position")
-#     depth = models.PositiveIntegerField(default=0, verbose_name="Item depth")
-#     name = models.CharField(max_length=50, verbose_name="Item name")
-#     slug = models.SlugField(max_length=50, unique=True, verbose_name="Item slug name")
-#
-#     class Meta:
-#         verbose_name = "Menu item"
-#         verbose_name_plural = "Menu items"
-#
-#     def __str__(self):
-#         return self.name
-
 class MenuItem(models.Model):
-    parent = models.ForeignKey("self", blank=True, null=True, related_name="children", on_delete=models.CASCADE)
-    menu = models.ForeignKey(Menu, related_name="items", on_delete=models.CASCADE)
+    """
+    Model for MenuItem table, containing item-to-item and item-to-menu relationship, name and url
+    Attribute "sort" can be used for sorting elements on the same depth level
+    """
+    parent = models.ForeignKey(
+        "self", blank=True, null=True, related_name="children", on_delete=models.CASCADE, verbose_name="Parent node"
+    )
+    menu = models.ForeignKey(Menu, related_name="items", on_delete=models.CASCADE, verbose_name="Menu tree")
 
     name = models.CharField(max_length=50, verbose_name="Item name")
-    depth = models.PositiveIntegerField(default=0, verbose_name="Item depth")
-    url = models.URLField(default=settings.DEFAULT_MENU_URL)
+    sort = models.IntegerField(default=0, verbose_name="Item sorting parameter")
+    url = models.URLField(default=settings.DEFAULT_MENU_URL, verbose_name="Item url")
 
     class Meta:
         verbose_name = "Menu item"

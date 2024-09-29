@@ -10,21 +10,24 @@ class MenuAdmin(admin.ModelAdmin):
     ordering = ["name", "url"]
 
     def save_model(self, request, obj, form, change):
+        """
+        Redefining save_model method for autocompletion of "url" field
+        """
         super().save_model(request, obj, form, change)
-        # obj.slug = obj.name + str(obj.pk)
         obj.url = obj.url + obj.name + str(obj.pk)
         obj.save()
 
 
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
-    list_display = ["id", "parent", "menu", "name", "depth", "url"]
-    readonly_fields = ["id", "depth", "url"]
-    ordering = ["depth", "name"]
+    list_display = ["id", "parent", "menu", "name", "sort", "url"]
+    readonly_fields = ["id", "url"]
+    ordering = ["menu", "parent", "-sort", "name"]
 
     def save_model(self, request, obj, form, change):
+        """
+        Redefining save_model method for autocompletion of "url" field
+        """
         super().save_model(request, obj, form, change)
-        if obj.parent:
-            obj.depth = obj.parent.depth + 1
         obj.url = obj.menu.url + str(obj.pk)
         obj.save()
